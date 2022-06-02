@@ -27,19 +27,21 @@ namespace Homework.Controllers
         }
 
         [HttpPost("sendEmail")]
-        public async Task<string> SendEmail(IFormFile file, FileExtension fileExtension, string recipient)
+        public async Task<IActionResult> SendEmail(IFormFile file, FileExtension fileExtension, string recipient)
         {
             if (file == null)
             {
-                return "No file was chosen";
+                return BadRequest("No file was chosen");
             }
 
             if(string.IsNullOrEmpty(recipient))
             {
-                return "No recepient was specified";
+                return BadRequest("No recepient was specified");
             }
+            
+            _homeworkService.UploadAndSendEmail(file, fileExtension, recipient);
 
-            return await _homeworkService.UploadAndSendEmail(file, fileExtension, recipient);
+            return Ok(); 
         }
         
         [HttpPost("convertFromUrl")]

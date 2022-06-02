@@ -13,7 +13,7 @@ namespace Homework.Business.Services.Implementation
         {
             var documentDto = new DocumentDto
             {
-                FileData = await GetByteArrayFromFile(file, fileExtension),
+                FileData = GetByteArrayFromFile(file, fileExtension),
                 FileName = file.FileName.Replace(".xml", $".{fileExtension}"),
                 MimeType = "application/octet-stream"
             };
@@ -21,7 +21,7 @@ namespace Homework.Business.Services.Implementation
             return documentDto;
         }
 
-        private async Task<byte[]> GetByteArrayFromFile(IFormFile file, FileExtension fileExtension)
+        private byte[] GetByteArrayFromFile(IFormFile file, FileExtension fileExtension)
         {
             var input = new StringBuilder();
 
@@ -68,9 +68,9 @@ namespace Homework.Business.Services.Implementation
             return Encoding.ASCII.GetBytes(serializedDoc);
         }
 
-        public async Task<string> UploadAndSendEmail(IFormFile file, FileExtension fileExtension, string recipient)
+        public void UploadAndSendEmail(IFormFile file, FileExtension fileExtension, string recipient)
         {
-            var byteArray = await GetByteArrayFromFile(file, fileExtension);
+            var byteArray = GetByteArrayFromFile(file, fileExtension);
             var fileName = file.FileName.Replace(".xml", $".{fileExtension}");
 
             var client = new SmtpClient("smtp.vsb.cz", 25);
@@ -86,8 +86,6 @@ namespace Homework.Business.Services.Implementation
 
                 client.Send(mail);
             }
-
-            return $"An email was sent to {recipient}";
         }
 
         public async Task<DocumentDto> ConvertFromUrl(string url, FileExtension fileExtension)
